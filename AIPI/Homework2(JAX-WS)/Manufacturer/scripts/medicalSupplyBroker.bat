@@ -1,0 +1,1 @@
+wsimport -s ../src http://localhost:8081/registration/Registration?wsdl

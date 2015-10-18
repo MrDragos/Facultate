@@ -1,0 +1,1 @@
+wsimport -s ../src http://localhost:8083/insurance/Insurance?wsdl

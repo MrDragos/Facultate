@@ -1,0 +1,581 @@
+package controller;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+
+
+
+
+import java.util.Date;
+
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import dataaccess.DataBaseWrapper;
+import dataaccess.DataBaseWrapperImpl;
+import general.Constants;
+import general.Utilities;
+import model.Model;
+import model.Patient;
+import model.Reservation;
+import model.User;
+
+public class ReceptionerTableManagement {
+
+    private String tableName;
+
+    private ArrayList<Label> attributesLabels;
+    private ArrayList<Control> attributesControls;
+
+    private DataBaseWrapperImpl databaseWrapper;
+
+    @FXML
+    private TableView<Model> tableContentTableView;
+    @FXML
+    private GridPane attributesGridPane;
+
+    public ReceptionerTableManagement(String tableName) {
+        this.tableName = tableName;
+        databaseWrapper = DataBaseWrapperImpl.getInstance();
+    }
+
+    @FXML
+    public void initialize() throws SQLException {
+
+        if (tableName == null || tableName.equals("")) {
+            return;
+        }
+
+        if (Constants.DEBUG) {
+            System.out.println("starting initialize " + tableName + "...");
+        }
+
+        ArrayList<String> attributes = databaseWrapper.getTableColumns(tableName);
+
+        attributesLabels = new ArrayList<>();
+        attributesControls = new ArrayList<>();
+
+        tableContentTableView.setItems(null);
+        if (tableContentTableView.getColumns() != null) {
+            tableContentTableView.getColumns().clear();
+        }
+
+        tableContentTableView.setEditable(true);
+        int currentIndex = 0;
+        for (String attribute : attributes) {
+
+            TableColumn<Model, String> column = new TableColumn<Model, String>(attribute);
+            column.setMinWidth(tableContentTableView.getPrefWidth() / attributes.size());
+            column.setCellValueFactory(new PropertyValueFactory<Model, String>(attribute));
+            tableContentTableView.getColumns().add(column);
+
+            Label label = new Label(attribute);
+            if(currentIndex < 9)
+            	GridPane.setConstraints(label, 0, currentIndex);
+            else
+            	GridPane.setConstraints(label, 2, currentIndex%9);
+            attributesLabels.add(label);
+            attributesGridPane.getChildren().add(label);
+            String parentTable = databaseWrapper.getForeignKeyParentTable(tableName, attribute);
+            
+            if(attribute.equals("reservation_date")){
+            	DatePicker datePicker = new DatePicker(LocalDate.now());
+
+                if(currentIndex < 9)
+                	GridPane.setConstraints(datePicker, 1, currentIndex);
+                else
+                	GridPane.setConstraints(datePicker, 3, currentIndex%9);
+                attributesControls.add(datePicker);
+                attributesGridPane.getChildren().add(datePicker);
+            }else 
+            if (parentTable != null) {
+                ComboBox<String> attributeComboBox = new ComboBox<String>();
+                attributeComboBox.setMinWidth(Constants.DEFAULT_COMBOBOX_WIDTH);
+                attributeComboBox.setMaxWidth(Constants.DEFAULT_COMBOBOX_WIDTH);
+                ArrayList<ArrayList<String>> parentTableContent = databaseWrapper.getTableContent(parentTable, null, null, null, null);
+                for (ArrayList<String> parentTableRecord : parentTableContent) {
+                    attributeComboBox.getItems().add(Utilities.compress(parentTableRecord));
+                }
+                
+                if(currentIndex < 9)
+                	GridPane.setConstraints(attributeComboBox, 1, currentIndex);
+                else
+                	GridPane.setConstraints(attributeComboBox, 3, currentIndex%9);
+                attributesControls.add(attributeComboBox);
+                attributesGridPane.getChildren().add(attributeComboBox);
+            } else {
+                TextField attributeTextField = new TextField();
+                attributeTextField.setMinWidth(Constants.DEFAULT_TEXTFIELD_WIDTH);
+                attributeTextField.setPromptText(attribute);
+                if (currentIndex == 0 && databaseWrapper.isAutoGeneratedPrimaryKey(tableName)) {
+                    attributeTextField.setText(Integer.toString(databaseWrapper.getTablePrimaryKeyMaximumValue(tableName) + 1));
+                    attributeTextField.setEditable(false);
+                }
+                if(currentIndex < 9)
+                	GridPane.setConstraints(attributeTextField, 1, currentIndex);
+                else
+                	GridPane.setConstraints(attributeTextField, 3, currentIndex%9);
+                attributesControls.add(attributeTextField);
+                attributesGridPane.getChildren().add(attributeTextField);
+            }
+
+            currentIndex++;
+        }
+        populateTableView(null);
+
+        if (Constants.DEBUG) {
+            System.out.println("finishing initialize " + tableName + "...");
+        }
+        
+        // TO DO: exercise 8
+
+    }
+
+    private Model getCurrentEntity(ArrayList<String> values) {
+        switch (tableName) {
+            case "user":
+                return new User(values);
+            case "patient":
+                return new Patient(values);
+            case "reservation":
+                return new Reservation(values);
+
+        }
+        return null;
+    }
+
+    public boolean isReservation(){
+    	if(attributesLabels.size() == 8)
+    		return true;
+    	else
+    		return false;
+    }
+    
+    public void populateTableView(String whereClause) {
+        try {
+            ArrayList<ArrayList<String>> values = DataBaseWrapperImpl.getInstance().getTableContent(tableName,
+                    null,
+                    (whereClause == null || whereClause.isEmpty()) ? null : whereClause,
+                    null,
+                    null);
+            ObservableList<Model> data = FXCollections.observableArrayList();
+            for (ArrayList<String> record : values) {
+                data.add(getCurrentEntity(record));
+            }
+            tableContentTableView.setItems(data);
+        } catch (SQLException sqlException) {
+            System.out.println("An exception had occured: " + sqlException.getMessage());
+            if (Constants.DEBUG) {
+                sqlException.printStackTrace();
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @FXML
+    private void tableContentTableViewHandler(MouseEvent mouseEvent) {
+        ArrayList<String> tableViewRecord = ((Model) tableContentTableView.getSelectionModel().getSelectedItem()).getValues();
+        int currentIndex = 0;
+        for (String value : tableViewRecord) {
+            if (attributesControls.get(currentIndex) instanceof ComboBox) {
+                try {
+                    String parentTable = databaseWrapper.getForeignKeyParentTable(tableName, attributesLabels.get(currentIndex).getText());
+                    if (parentTable != null) {
+                        ArrayList<ArrayList<String>> parentTableReferrence = null;
+                        parentTableReferrence = databaseWrapper.getTableContent(parentTable,
+                                null,
+                                databaseWrapper.getTablePrimaryKey(parentTable) + "=" + tableViewRecord.get(currentIndex),
+                                null,
+                                null);
+                        ((ComboBox<String>) attributesControls.get(currentIndex)).setValue(Utilities.compress(parentTableReferrence.get(0)));
+                    }
+                } catch (SQLException sqlException) {
+                    System.out.println("An exception had occured: " + sqlException.getMessage());
+                    if (Constants.DEBUG) {
+                        sqlException.printStackTrace();
+                    }
+                }
+            } else  if (attributesControls.get(currentIndex) instanceof DatePicker){
+            	String[] date = value.split("-");
+            	int year = Integer.parseInt(date[0]);
+            	int month = Integer.parseInt(date[1]);
+            	int day = Integer.parseInt(date[2]);
+            	((DatePicker) attributesControls.get(currentIndex)).setValue(LocalDate.of(year, month, day));
+            }else{
+                ((TextField) attributesControls.get(currentIndex)).setText(value);
+            }
+            currentIndex++;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean checkAllFieldsCompletion() {
+    	int i = 0;
+        for (Control attributeControl : attributesControls) {
+            String value = null;
+            if (attributeControl instanceof ComboBox) {
+                value = ((ComboBox<String>) attributeControl).getValue();
+            } else 
+            if (attributeControl instanceof DatePicker){
+            	LocalDate ld = ((DatePicker) attributeControl).getValue();
+            	value = ld.toString();
+            	
+            }else
+            {
+                value = ((TextField) attributeControl).getText();
+            }
+            if (value == null || value.isEmpty()) {
+            	if(!attributesLabels.get(i).getText().equals("id"))
+            		return false;
+            }
+            i++;
+        }
+        
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @FXML
+    private void insertButtonHandler(MouseEvent mouseEvent) {
+    	
+        if (!checkAllFieldsCompletion()) {
+            Dialog dialog = new Dialog();
+            dialog.setProperties(Constants.ERROR_WINDOW_TITLE,
+                    Constants.ERROR_ICON_LOCATION,
+                    Constants.ERROR_MESSAGE_CONTENT);
+            dialog.start();
+            return;
+        }
+        int currentIndex = 0;
+        ArrayList<String> values = new ArrayList<>();
+        for (Control attributeControl : attributesControls) {
+            if (attributeControl instanceof ComboBox) {
+                try {
+                    values.add(databaseWrapper.getForeignKeyValue(tableName,
+                            attributesLabels.get(currentIndex).getText(),
+                            Utilities.decompress(((ComboBox<String>) attributeControl).getValue())));
+                } catch (Exception sqlException) {
+                    System.out.println("An exception had occured: " + sqlException.getMessage());
+                    if (Constants.DEBUG) {
+                        sqlException.printStackTrace();
+                    }
+                }
+            } else if (attributeControl instanceof DatePicker) {
+            	LocalDate ld = ((DatePicker) attributeControl).getValue();
+            	values.add(ld.toString());
+            }else{
+                values.add(((TextField) attributeControl).getText());
+            }
+            currentIndex++;
+        }
+        try {
+            databaseWrapper.insertValuesIntoTable(tableName,
+                    null,
+                    values,
+                    false);
+        } catch (Exception sqlException) {
+            System.out.println("An exception had occured: " + sqlException.getMessage());
+            if (Constants.DEBUG) {
+                sqlException.printStackTrace();
+            }
+        }
+        populateTableView(null);
+        tableContentTableView.getSelectionModel().select(tableContentTableView.getItems().size() - 1);
+        tableContentTableView.scrollTo(tableContentTableView.getItems().size() - 1);
+        clearButtonHandler(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @FXML
+    private void updateButtonHandler(MouseEvent mouseEvent) {
+        int currentIndex = 0;
+        ArrayList<String> attributes = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
+        for (Control attributeControl : attributesControls) {
+            String value = null;
+            if (attributeControl instanceof ComboBox) {
+                try {
+                    String parentTableValues = ((ComboBox<String>) attributeControl).getValue();
+                    if (parentTableValues != null && !parentTableValues.isEmpty()) {
+                        value = databaseWrapper.getForeignKeyValue(tableName,
+                                attributesLabels.get(currentIndex).getText(),
+                                Utilities.decompress(parentTableValues));
+                    }
+                } catch (Exception sqlException) {
+                    System.out.println("An exception had occured: " + sqlException.getMessage());
+                    if (Constants.DEBUG) {
+                        sqlException.printStackTrace();
+                    }
+                }
+            } else 
+                if (attributeControl instanceof DatePicker){
+                	LocalDate ld = ((DatePicker) attributeControl).getValue();
+                	value = ld.toString();
+                	
+                } else {
+                value = ((TextField) attributeControl).getText();
+            }
+            if (value != null && !value.isEmpty()) {
+                attributes.add(attributesLabels.get(currentIndex).getText());
+                values.add(value);
+            }
+            currentIndex++;
+        }
+        try {
+            if (attributes != null && values != null && !attributes.isEmpty() && !values.isEmpty()) {
+                databaseWrapper.updateRecordsIntoTable(tableName, attributes, values, null);
+            	//databaseWrapper.deleteRecordsFromTable(tableName,
+                //        attributes,
+                  //      values,
+                    //    null);
+            }
+        } catch (Exception sqlException) {
+            System.out.println("An exception had occured: " + sqlException.getMessage());
+            if (Constants.DEBUG) {
+                sqlException.printStackTrace();
+            }
+        }
+        populateTableView(null);
+        //populateTableView();
+        tableContentTableView.getSelectionModel().select(0);
+        tableContentTableView.scrollTo(0);
+        clearButtonHandler(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @FXML
+    private void deleteButtonHandler(MouseEvent mouseEvent) {
+    	 int currentIndex = 0;
+         ArrayList<String> attributes = new ArrayList<>();
+         ArrayList<String> values = new ArrayList<>();
+         for (Control attributeControl : attributesControls) {
+             String value = null;
+             if (attributeControl instanceof ComboBox) {
+                 try {
+                     String parentTableValues = ((ComboBox<String>) attributeControl).getValue();
+                     if (parentTableValues != null && !parentTableValues.isEmpty()) {
+                         value = databaseWrapper.getForeignKeyValue(tableName,
+                                 attributesLabels.get(currentIndex).getText(),
+                                 Utilities.decompress(parentTableValues));
+                     }
+                 } catch (Exception sqlException) {
+                     System.out.println("An exception had occured: " + sqlException.getMessage());
+                     if (Constants.DEBUG) {
+                         sqlException.printStackTrace();
+                     }
+                 }
+             }  else 
+                 if (attributeControl instanceof DatePicker){
+                 	LocalDate ld = ((DatePicker) attributeControl).getValue();
+                 	value = ld.toString();
+                 	
+                 }else {
+                 value = ((TextField) attributeControl).getText();
+             }
+             if (value != null && !value.isEmpty()) {
+                 attributes.add(attributesLabels.get(currentIndex).getText());
+                 values.add(value);
+             }
+             currentIndex++;
+         }
+         try {
+             if (attributes != null && values != null && !attributes.isEmpty() && !values.isEmpty()) {
+                 databaseWrapper.deleteRecordsFromTable(tableName,
+                         attributes,
+                         values,
+                         null);
+             }
+         } catch (Exception sqlException) {
+             System.out.println("An exception had occured: " + sqlException.getMessage());
+             if (Constants.DEBUG) {
+                 sqlException.printStackTrace();
+             }
+         }
+         populateTableView(null);
+         tableContentTableView.getSelectionModel().select(0);
+         tableContentTableView.scrollTo(0);
+         clearButtonHandler(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @FXML
+    private void searchButtonHandler(MouseEvent mouseEvent) {
+	   	 int currentIndex = 0;
+	     ArrayList<String> attributes = new ArrayList<>();
+	     ArrayList<String> values = new ArrayList<>();
+	     for (Control attributeControl : attributesControls) {
+	         String value = null;
+	         if (attributeControl instanceof ComboBox) {
+	             try {
+	                 String parentTableValues = ((ComboBox<String>) attributeControl).getValue();
+	                 if (parentTableValues != null && !parentTableValues.isEmpty()) {
+	                     value = databaseWrapper.getForeignKeyValue(tableName,
+	                             attributesLabels.get(currentIndex).getText(),
+	                             Utilities.decompress(parentTableValues));
+	                 }
+	             } catch (Exception sqlException) {
+	                 System.out.println("An exception had occured: " + sqlException.getMessage());
+	                 if (Constants.DEBUG) {
+	                     sqlException.printStackTrace();
+	                 }
+	             }
+	         } else 
+	             if (attributeControl instanceof DatePicker){
+	             	LocalDate ld = ((DatePicker) attributeControl).getValue();
+	             	value = ld.toString();
+	             	
+	             } else {
+	             value = ((TextField) attributeControl).getText();
+	         }
+	         if (value != null && !value.isEmpty()) {
+	             attributes.add(attributesLabels.get(currentIndex).getText());
+	             values.add(value);
+	         }
+	         currentIndex++;
+	     }
+	     try {
+	         if (attributes != null && values != null && !attributes.isEmpty() && !values.isEmpty()) {
+	             //databaseWrapper.updateRecordsIntoTable(tableName, attributes, values, null);
+	         	//databaseWrapper.deleteRecordsFromTable(tableName,
+	             //        attributes,
+	               //      values,
+	                 //    null);
+	         }
+	     } catch (Exception sqlException) {
+	         System.out.println("An exception had occured: " + sqlException.getMessage());
+	         if (Constants.DEBUG) {
+	             sqlException.printStackTrace();
+	         }
+	     }
+	     
+	     String query = new String("");
+	     
+	     //nu are sens sa faci search dupa un id
+	     //mic hack
+	     int k = 0;
+	     //if(attributes.get(0).equals("id") && attributes.size() > 1)
+	     if(attributes.get(0).equals("id"))
+	    	 k = 1;
+	     
+	     for(int i=k;i<attributes.size();i++){
+	    	 
+	    	 //if(!values.get(i).matches("[a-zA-Z]+"))
+	    		 query += attributes.get(i) + " = \"" + values.get(i) + "\" AND ";
+	    	 //else
+	    		// query += attributes.get(i) + " = " + values.get(i) + " AND ";
+	     }
+	     
+	     query = (String) query.subSequence(0, query.length()-4);
+	     System.out.println("rrrrrrrrrrrrrrrrrrr"+query);
+	    	 
+	     
+	     populateTableView(query);
+	     System.out.println("Stuff");
+	     tableContentTableView.getSelectionModel().select(0);
+	     tableContentTableView.scrollTo(0);
+	     //clearButtonHandler(null);
+    }
+
+    boolean activateAnimation = false;
+
+    @SuppressWarnings("unchecked")
+    @FXML
+    private void clearButtonHandler(MouseEvent mouseEvent) {
+	   	 
+   	 	int currentIndex = 0;
+	    ArrayList<String> attributes = new ArrayList<>();
+	    ArrayList<String> values = new ArrayList<>();
+    	
+    	if(mouseEvent != null){
+
+		     populateTableView(null);
+		     tableContentTableView.getSelectionModel().select(0);
+		     tableContentTableView.scrollTo(0);
+		     tableContentTableView.setItems(null);
+		     
+		     for (Control attributeControl : attributesControls){
+		    	 if (attributeControl instanceof ComboBox) 
+		    		 ((ComboBox<String>) attributeControl).setValue(null);
+		         else
+		        	 if (attributeControl instanceof DatePicker)
+		        		 ((DatePicker) attributeControl).setValue(null);
+		        	else
+		    		 ((TextField) attributeControl).clear();
+		     }
+	     //clearButtonHandler(null);
+    	}else{
+		     for (Control attributeControl : attributesControls){
+		    	 if (attributeControl instanceof ComboBox) 
+		    		 ((ComboBox<String>) attributeControl).setValue(null);
+		         else
+		        	 if (attributeControl instanceof DatePicker)
+		        		 ((DatePicker) attributeControl).setValue(null);
+		        	else
+		    		 ((TextField) attributeControl).clear();
+		     }
+    	} 
+    }
+    
+    @SuppressWarnings("unchecked")
+    @FXML
+    public void bonFiscalButtonHandler(MouseEvent exvent){
+    	if(isReservation()){
+    		DatePicker dp = (DatePicker) attributesControls.get(1);
+        	LocalDate ld = dp.getValue();
+        	//System.out.println(ld.toString());
+        	
+        	ComboBox cb = (ComboBox) attributesControls.get(4);
+        	String id = cb.getValue().toString().split("/")[0];
+        	//System.out.println(id);
+        	Integer medicalServiceId = Integer.parseInt(id.substring(0,id.length()-1));
+        	FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.BON_FISCAL_FXML));
+            try {
+    			Parent root = (Parent)loader.load();
+    			BonFiscal controller = loader.<BonFiscal>getController();
+    			controller.setDate(ld.toString());
+    			controller.setMedicalServiceId(medicalServiceId);
+    			controller.init();
+    		    Stage applicationStage;
+    		    Scene applicationScene;
+    		    
+                applicationScene = new Scene(root);
+                
+                applicationStage = new Stage();
+                applicationStage.setScene(applicationScene);
+                applicationStage.show();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}
+    }
+    
+    @SuppressWarnings("unchecked")
+    @FXML
+    public void reservationButtonHandler(MouseEvent exvent){
+    	System.out.println("GOOOOOOOOOGLE");
+    }
+}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="585.0" prefWidth="761.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.profitWindow">
+<children><Label layoutX="143.0" layoutY="89.0" prefHeight="17.0" prefWidth="113.0" text="Venituri" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label layoutX="494.0" layoutY="89.0" prefHeight="27.0" prefWidth="81.0" text="Cheltuieli" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label fx:id="venituriLabel" layoutX="21.0" layoutY="483.0" prefHeight="27.0" prefWidth="347.0" text="Total Venituri :" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label fx:id="cheltuieliLabel" layoutX="404.0" layoutY="483.0" prefHeight="27.0" prefWidth="325.0" text="Total Cheltuieli:" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label fx:id="finalProfitLabel" layoutX="21.0" layoutY="521.0" prefHeight="27.0" prefWidth="347.0" text="PROFIT :" textFill="#4545f4">
+<font>
+<Font name="System Bold" size="18.0" />
+</font></Label><Button layoutX="512.0" layoutY="34.0" mnemonicParsing="false" onAction="#profitButtonHandler" prefHeight="37.0" prefWidth="93.0" text="Profit" textFill="#4545f4">
+<font>
+<Font name="System Bold" size="14.0" />
+</font>
+</Button><TextField fx:id="monthTextField" layoutX="385.0" layoutY="44.0" prefHeight="25.0" prefWidth="70.0" /><TextField fx:id="yearTextField" layoutX="231.0" layoutY="44.0" prefHeight="25.0" prefWidth="70.0" /><Label layoutX="188.0" layoutY="43.0" prefHeight="17.0" prefWidth="62.0" text="An" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><Label layoutX="323.0" layoutY="43.0" prefHeight="17.0" prefWidth="62.0" text="Luna" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><TextArea fx:id="venituriArea" layoutX="31.0" layoutY="131.0" prefHeight="336.0" prefWidth="325.0" /><TextArea fx:id="cheltuieliArea" layoutX="385.0" layoutY="131.0" prefHeight="336.0" prefWidth="325.0" />
+</children></AnchorPane>

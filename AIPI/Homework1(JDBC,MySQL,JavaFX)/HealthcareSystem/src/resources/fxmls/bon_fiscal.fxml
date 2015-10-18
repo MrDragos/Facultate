@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="423.0" prefWidth="405.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.BonFiscal">
+<children><Label layoutX="143.0" layoutY="28.0" prefHeight="29.0" prefWidth="137.0" text="BON FISCAL" textFill="#004be5">
+<font>
+<Font name="Arial Bold" size="20.0" />
+</font></Label><Label fx:id="totalLabel" layoutX="34.0" layoutY="384.0" prefHeight="30.0" prefWidth="184.0" text="TOTAL : " textFill="#004be5">
+<font>
+<Font name="System Bold" size="20.0" />
+</font></Label><Label fx:id="dateLabel" layoutX="34.0" layoutY="78.0" prefHeight="29.0" prefWidth="338.0" text="DATA : " textFill="#004be5">
+<font>
+<Font name="Arial Bold" size="20.0" />
+</font>
+</Label><Label layoutX="34.0" layoutY="118.0" prefHeight="29.0" prefWidth="338.0" text="                 Servicii Medicale" textFill="#004be5">
+<font>
+<Font name="Arial Bold" size="20.0" />
+</font>
+</Label><TextArea fx:id="textArea" layoutX="34.0" layoutY="161.0" prefHeight="215.0" prefWidth="338.0" />
+</children></AnchorPane>

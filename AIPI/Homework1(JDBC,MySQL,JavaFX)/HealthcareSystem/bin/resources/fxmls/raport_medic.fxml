@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="981.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MedicalReportWindow">
+<children><Label layoutX="138.0" layoutY="27.0" prefHeight="17.0" prefWidth="81.0" text="Pacient" textFill="#4545f4">
+<font>
+<Font name="System Bold" size="18.0" />
+</font></Label><Label layoutX="33.0" layoutY="87.0" prefHeight="17.0" prefWidth="105.0" text="Nume:" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label layoutX="33.0" layoutY="142.0" prefHeight="17.0" prefWidth="105.0" text="Prenume:" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label layoutX="671.0" layoutY="76.0" prefHeight="27.0" prefWidth="81.0" text="Data " textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label layoutX="430.0" layoutY="27.0" prefHeight="17.0" prefWidth="98.0" text="Medic" textFill="#4545f4">
+<font>
+<Font name="System Bold" size="18.0" />
+</font></Label><Label layoutX="366.0" layoutY="87.0" prefHeight="17.0" prefWidth="105.0" text="Nume:" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><Label layoutX="366.0" layoutY="142.0" prefHeight="17.0" prefWidth="105.0" text="Prenume:" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font></Label><TextField fx:id="numePacientLabel" layoutX="162.0" layoutY="83.0" /><TextField fx:id="prenumePacientLabel" layoutX="162.0" layoutY="138.0" /><TextField fx:id="numeMedicLabel" layoutX="479.0" layoutY="83.0" /><TextField fx:id="prenumeMedicLabel" layoutX="480.0" layoutY="143.0" /><TextArea fx:id="historyArea" layoutX="39.0" layoutY="242.0" prefHeight="200.0" prefWidth="305.0" /><Label layoutX="139.0" layoutY="199.0" prefHeight="17.0" prefWidth="105.0" text="Istoric" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><TextArea fx:id="simpotmsArea" layoutX="395.0" layoutY="242.0" prefHeight="200.0" prefWidth="305.0" /><Label layoutX="495.0" layoutY="199.0" prefHeight="17.0" prefWidth="105.0" text="Simptome" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><Label layoutX="495.0" layoutY="464.0" prefHeight="17.0" prefWidth="105.0" text="Recomandari" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><TextArea fx:id="recomandationsArea" layoutX="402.0" layoutY="497.0" prefHeight="200.0" prefWidth="305.0" /><Label layoutX="111.0" layoutY="464.0" prefHeight="17.0" prefWidth="105.0" text="Diagnostic" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><TextArea fx:id="diagnosticArea" layoutX="39.0" layoutY="497.0" prefHeight="200.0" prefWidth="305.0" /><ScrollBar layoutX="330.0" layoutY="242.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="14.0" /><ScrollBar layoutX="686.0" layoutY="242.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="14.0" /><ScrollBar layoutX="330.0" layoutY="497.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="14.0" /><ScrollBar layoutX="693.0" layoutY="497.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="14.0" /><ListView fx:id="investigationsListView" layoutX="739.0" layoutY="497.0" prefHeight="200.0" prefWidth="200.0" /><Label layoutX="787.0" layoutY="464.0" prefHeight="17.0" prefWidth="105.0" text="Investigatii" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label><Button layoutX="671.0" layoutY="132.0" mnemonicParsing="false" onAction="#paraphButtonHandler" prefHeight="37.0" prefWidth="81.0" text="Validare" /><DatePicker fx:id="datePicker" layoutX="752.0" layoutY="77.0" /><Label fx:id="paraphcodeLabel" layoutX="777.0" layoutY="147.0" prefHeight="17.0" prefWidth="149.0" text="Paraphcode: " textFill="#4545f4" /><TextField fx:id="medicalServiceField" layoutX="719.0" layoutY="242.0" /><Button layoutX="884.0" layoutY="242.0" mnemonicParsing="false" onAction="#autoButtonHandler" prefHeight="25.0" prefWidth="68.0" text="Auto" /><Label layoutX="719.0" layoutY="199.0" prefHeight="27.0" prefWidth="134.0" text="Serviciu Medical" textFill="#4545f4">
+<font>
+<Font size="18.0" />
+</font>
+</Label>
+</children></AnchorPane>

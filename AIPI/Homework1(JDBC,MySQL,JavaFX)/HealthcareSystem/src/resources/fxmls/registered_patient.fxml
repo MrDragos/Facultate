@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="598.0" prefWidth="542.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RegisteredPatient">
+<children><Label layoutX="143.0" layoutY="55.0" prefHeight="36.0" prefWidth="264.0" text="Utilizatori Inregistrati" textFill="#0083fa">
+<font>
+<Font name="System Bold" size="25.0" />
+</font></Label><ListView fx:id="listView" layoutX="21.0" layoutY="107.0" prefHeight="465.0" prefWidth="507.0" /><ScrollBar fx:id="scrollBar" layoutX="511.0" layoutY="107.0" orientation="VERTICAL" prefHeight="465.0" prefWidth="17.0" /><Label fx:id="dataLabel" layoutX="38.0" layoutY="9.0" prefHeight="30.0" prefWidth="198.0" text="DATA: " textFill="#0083fa">
+<font>
+<Font size="14.0" />
+</font></Label>
+</children></AnchorPane>

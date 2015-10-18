@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="452.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<children><Label layoutX="61.0" layoutY="47.0" prefHeight="36.0" prefWidth="130.0" text="Monday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><Label layoutX="61.0" layoutY="95.0" prefHeight="36.0" prefWidth="130.0" text="Tuesday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><Label layoutX="61.0" layoutY="143.0" prefHeight="36.0" prefWidth="130.0" text="Wednesday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><Label layoutX="61.0" layoutY="193.0" prefHeight="36.0" prefWidth="130.0" text="Tuesday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><Label layoutX="61.0" layoutY="241.0" prefHeight="36.0" prefWidth="130.0" text="Friday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><Label layoutX="61.0" layoutY="291.0" prefHeight="36.0" prefWidth="130.0" text="Saturday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><Label layoutX="61.0" layoutY="335.0" prefHeight="36.0" prefWidth="130.0" text="Sunday">
+<font>
+<Font size="25.0" />
+</font>
+</Label><TextField layoutX="210.0" layoutY="47.0" prefHeight="36.0" prefWidth="165.0" /><TextField layoutX="210.0" layoutY="95.0" prefHeight="36.0" prefWidth="165.0" /><TextField layoutX="210.0" layoutY="335.0" prefHeight="36.0" prefWidth="165.0" /><TextField layoutX="210.0" layoutY="291.0" prefHeight="36.0" prefWidth="165.0" /><TextField layoutX="210.0" layoutY="241.0" prefHeight="36.0" prefWidth="165.0" /><TextField layoutX="210.0" layoutY="193.0" prefHeight="36.0" prefWidth="165.0" /><TextField layoutX="210.0" layoutY="143.0" prefHeight="36.0" prefWidth="165.0" />
+</children></AnchorPane>

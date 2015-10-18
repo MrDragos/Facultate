@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0" prefWidth="300.0" styleClass="root" stylesheets="@Login.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Authentication">
+<children><GridPane alignment="center" hgap="10" prefHeight="275.0" prefWidth="300.0" vgap="10">
+ 
+
+<children>
+	<Label id="welcome-label" text="Welcome" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+    <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+  
+  <TextField fx:id="usernameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+  
+  <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+  
+  <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+  <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+      <children>
+      <Button id="loginButton" onAction="#loginButtonHandler" text="Login" />
+      <Button id="cancelButton" onAction="#cancelButtonHandler" text="Cancel" />
+      </children>
+  </HBox>
+  
+    <Label fx:id="errorLabel" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+</children>
+<columnConstraints>
+<ColumnConstraints />
+<ColumnConstraints />
+</columnConstraints>
+<rowConstraints>
+<RowConstraints />
+<RowConstraints />
+<RowConstraints />
+<RowConstraints />
+<RowConstraints />
+<RowConstraints />
+<RowConstraints />
+</rowConstraints>
+
+</GridPane>
+</children></AnchorPane>

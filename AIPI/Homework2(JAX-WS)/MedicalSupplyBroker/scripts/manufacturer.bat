@@ -1,0 +1,1 @@
+wsimport -s ../src http://localhost:8082/order/Order?wsdl

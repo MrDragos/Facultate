@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="600.0" prefWidth="600.0" style="-fx-background-color: beige;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SearchUser">
+<children><TextField fx:id="firstName" layoutX="151.0" layoutY="49.0" /><TextField fx:id="lastName" layoutX="151.0" layoutY="91.0" /><TextField fx:id="position" layoutX="151.0" layoutY="135.0" /><Label layoutX="31.0" layoutY="48.0" prefHeight="27.0" prefWidth="92.0" text="First Name">
+<font>
+<Font size="18.0" />
+</font></Label><Label layoutX="31.0" layoutY="91.0" prefHeight="25.0" prefWidth="81.0" text="Last Name">
+<font>
+<Font size="16.0" />
+</font></Label><Label layoutX="31.0" layoutY="135.0" prefHeight="17.0" prefWidth="69.0" text="Position">
+<font>
+<Font size="16.0" />
+</font></Label><Button layoutX="406.0" layoutY="48.0" mnemonicParsing="false" onAction="#searchButtonHandler" prefHeight="49.0" prefWidth="133.0" text="Search">
+<font>
+<Font size="16.0" />
+</font></Button><Label fx:id="personalIdentifierLabel" layoutX="72.0" layoutY="284.0" prefHeight="17.0" prefWidth="241.0" text="Personal Identifier : " /><Label fx:id="phoneLabel" layoutX="72.0" layoutY="318.0" prefHeight="17.0" prefWidth="205.0" text="Phone Number : " /><Label fx:id="ibanLabel" layoutX="72.0" layoutY="351.0" prefHeight="17.0" prefWidth="241.0" text="IBAN : " /><Label fx:id="hireDateLabel" layoutX="72.0" layoutY="383.0" prefHeight="17.0" prefWidth="225.0" text="Hire Date : " /><Label fx:id="salaryLabel" layoutX="72.0" layoutY="421.0" prefHeight="17.0" prefWidth="225.0" text="Salary:" /><Label fx:id="usernameLabel" layoutX="72.0" layoutY="453.0" prefHeight="17.0" prefWidth="225.0" text="Username:" /><Label fx:id="addressLabel" layoutX="370.0" layoutY="284.0" prefHeight="17.0" prefWidth="205.0" text="Addres : " /><Label fx:id="emailLabel" layoutX="370.0" layoutY="318.0" prefHeight="17.0" prefWidth="205.0" text="Email : " /><Label fx:id="contractNumberLabel" layoutX="370.0" layoutY="351.0" prefHeight="17.0" prefWidth="205.0" text="Contract Number : " /><Label fx:id="positionLabel" layoutX="370.0" layoutY="383.0" prefHeight="17.0" prefWidth="205.0" text="Position :" /><Label fx:id="workingHoursLabel" layoutX="370.0" layoutY="421.0" prefHeight="17.0" prefWidth="205.0" text="Working hours: " /><Label fx:id="passwordLabel" layoutX="370.0" layoutY="453.0" prefHeight="17.0" prefWidth="205.0" text="Password:" /><Label layoutX="72.0" layoutY="223.0" /><Label fx:id="nameLabel" layoutX="188.0" layoutY="223.0" prefHeight="17.0" prefWidth="225.0">
+<font>
+<Font name="System Bold" size="25.0" />
+</font></Label><Label fx:id="scientificTitleLabel" layoutX="72.0" layoutY="485.0" prefHeight="17.0" prefWidth="205.0" text="Scientific title:" /><Label fx:id="didacticChairLabel" layoutX="370.0" layoutY="485.0" prefHeight="17.0" prefWidth="205.0" text="Didactic chair :" /><Button layoutX="497.0" layoutY="527.0" mnemonicParsing="false" onAction="#closeButtonHandler" prefHeight="36.0" prefWidth="69.0" text="Close" /><Button layoutX="406.0" layoutY="123.0" mnemonicParsing="false" onAction="#generalScheduleButtonHandler" prefHeight="49.0" prefWidth="149.0" text="General Schedule">
+<font>
+<Font size="16.0" />
+</font></Button><Button layoutX="406.0" layoutY="199.0" mnemonicParsing="false" onAction="#specificScheduleButtonHandler" prefHeight="49.0" prefWidth="149.0" text="Specific Schedule">
+<font>
+<Font size="16.0" />
+</font></Button><Button layoutX="46.0" layoutY="527.0" mnemonicParsing="false" onAction="#vacationButtonHandler" prefHeight="36.0" prefWidth="133.0" text="VACATION" />
+</children> 
+</AnchorPane>

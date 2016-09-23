@@ -1,0 +1,188 @@
+Sava
+Dragos
+334CA
+
+	Punctul de plecare in rezolvarea temei a fost scheletul de cod din laboratorul 5(in care era
+implementat modelul Replicated-Workers), asupra caruia am efectuat cateva modificari(am implementat
+separat pentru operatiile de Map si Reduce clase de "workpool" , "partial solution" si "worker").
+
+
+Notatii folostie:
+
+- NT  = numar threaduri
+- DOC = numele documentului pentru care se dorește determinarea gradului de plagiere 
+- D   = dimensiunea D în octeți a fragmentelor în care se vor impărți fișierele
+- X   = pragul de similaritate
+- ND  = numarul de documente de tip text de indexat in care se va face cautarea
+
+I. Fisere(Clase):
+
+1)Main.java	-	aceasta este clasa principala , care include si functia de main
+
+2)MapPartialSolution.java		-	in aceasta clasa imi definesc solutii partiale pentru 
+									task-urilde de tip Map 
+
+3)ReducePartialSolution.java 	-	in aceasta clasa imi definesc solutii partiale pentru 
+									task-urilde de tip Reduce
+
+4)ReduceWorkPool.java			- 	aceasta clasa reprezinta workpool-ul in care voi introduce
+						 		  	task-urile de tip reduce
+
+5)MapWorkPool.java				- 	aceasta clasa reprezinta workpool-ul in care voi introduce
+						  			task-urile de tip Map
+
+6)ReduceWorker.java				- 	clasa reprezinta un thread worker de tip Reduce
+
+7)MapWorker.java				- 	clasa reprezinta un thread worker de tip Map
+
+
+II. Explicatii detailate asupra claselor
+
+1) Clasa Main - ea reprezinta programul principal
+			  - in ea fac scrierea si citirea din fisierele I/O
+			  - cu ajutorul claselor implementate mai jos, voi rezolva problema folosind modelul
+			    de programare paralela Map-Reduce
+
+2) Clasa MapPartialSolutin :
+	- reprezinta o solutie partiala pentru functia de Map. Aceste solutii partiale constituie 
+	  task-uri care sunt introduse in workpool-ul pentru Map.
+	- constructorul primeste ca parametri :
+						-	numele fisierului din care vom citi
+						-   offsetul de start de unde vom incepe citirea din fisier
+						-	offsetul de sfarsit , limita pana unde vo citi din fisier
+						-	primeste si dimensiunea fisierului 
+	- tot in constructor calculez si valoarea campului "size" care imi indica numarul de byti al 
+	  segmentului citit din fisier(in principiu ar trebui sa fie de lungime D , dar ultimul segment
+	  ar putea sa fie mai mic)
+	- tot aici initializez campul sequence = new byte[size] , in care voi tine secventa efectiva de 
+	  byti
+
+3) Clasa ReducePartialSolutin :
+	- reprezinta o solutie partiala pentru functia de Reduce. Aceste solutii partiale constituie 
+	  task-uri care sunt introduse in workpool-ul pentru Reduce.
+	- constructorul primeste ca parametri :
+						-	numele fisierului pentru care voi calcula gradul de plagiere fata de DOC
+						-   un Hashtable<String, Integer> in care tin cuvintele si numarul de 
+							aparitii al acestora in fisierul DOC
+						-   un Hashtable<String, Integer> in care tin cuvintele si numarul de 
+							aparitii al acestora in fisierul pentru care calculez plagierea
+						-	X = pragul de similaritate
+
+4) ReduceWorkPool	-  clasa ce implementeaza un "work pool" in care task-urile ce vor fi introduse 
+ 					   vor fi obiecte de  tipul  ReducePartialSolution.
+
+5) MapWorkPool		-  clasa ce implementeaza un "work pool" in care task-urile ce vor fi introduse 
+ 					   vor fi obiecte de  tipul  MapPartialSolution.
+
+6) MapWorker		-	clasa implementeaza un thread worker pentru operatia de Map
+					- 	in metoda processPartialSolution citesc din fisierul solutiei partiale un
+						segment de D octeti , apoi voi extrage cuvintele din acesta si le voi adauga
+						intr-un Hashtable<String, Hashtable<String, Integer>> numit "map" (in acesta
+						vor scrie toti workerii) din clasa Main.Cheia reprezinta numele fisierului 
+						din care am citit , iar  valoarea este un Hashtable<String, Integer> in care
+						cheia este cuvantul si valoarea este numarul de aparitii al acestuia.Inainte
+						de a adauga un cuvant in tabel , verifc mai intai daca exista deja o intrare
+						in tabel pentru el.Daca exista voi suprarascrie intrarea respectiva cu una 
+						in care valoare este vechiul numar de aparitii + 1.Daca nu exista , atunci 
+						voi adauga o noua intrare avand key = cuvant si value = 1 .
+
+
+
+7) ReduceWorker		- clasa implementeaza un thread worker pentru operatia de Reduce
+					- ea contine 2 campuri :
+						-ArrayList<String> fileNames - in care va retine numele fisierelor ce 
+													   reprezinta solutii
+						-ArrayList<Double> similarities - in care va retine gradul de similaritate
+														  a solutiilor
+						-puteam in locul acestor ArrayList-uri sa folosesc un Hashtabel
+					- metoda processPartialSolution va procesa o solutie de tipul 
+					  ReducePartialSolution.Va lua cele 2 Hashtabel-uri(unul pentru fisier si unul 
+					  pentru DOC) din solutia partiala si va calcula pentru fiecare numarul total 
+					  de cuvinte pe care le contine. Apoi voi face intersectia celor 2 tabele.Pentru
+					  fiecare cuvant comun celor 2 tabele voi calcula frecventele acestuia in 
+					  fiecare tabel folosind formula data in enunt  
+					  f(t, d) = (nr_apariții_cuvânt(t, d) / nr_total_cuvinte(d)) * 100 , 
+					  iar apoi cu ajutorul lor voi calcula gradul de similitudine.As fi putut face
+					  reuniunea cuvintelor din tabele in locul intersectiei , dar daca un cuvant
+					  aparea intr-un tabel si nu aparea in celalalt , acesta ar fi avut a doua 
+					  frecventa 0 , si astfel cand am fi folosit aceasta valoare in calculul 
+					  similitudinii , valoarea finala nu ar fi fost afectata(f(t,di)*0 = 0). 
+					
+
+III.Algoritmul de rezolvare  al temei este urmatorul:
+
+-prima data realizez serial citirea datelor din fisierul dat ca input in linia de comanda
+
+MAP:
+
+-pentru fiecare document , voi calcula dimensiunea acestuia pentru a detemina in cate segmente va 
+ trebui sa fie spart acestea , calculez offsetul(limita) de start si inceput pentru fiecare segment 
+ si voi crea un numar de MapPartialSolution egal cu numarul de fragmente pe care le voi adauga apoi 
+ intr-un MapWorkPool
+-fiecare MapPartialSolution primeste numarul fisierului din care va citi,offsetul de start 
+ si de sfarsit si dimensiunea fisierului
+-odata cu crearea solutiilor partiale initializez si campul "map" care este un 
+ Hashtable<String, Hashtable<String, Integer>> in care vor scrie toate threadurile de tim MapWorker.
+ Cheia este reprezentata de numele fisierului iar valoarea de un Hashtable<String, Integer> unde
+ key = cuvant si value = numar aparitii.
+-voi crea NT(numar threaduri) MapWorkeri  pe care ii voi adauga intr-un vector
+-apoi voi porni toti MapWorkeri din vector
+-fiecare MapWorker va prelua solutii partiale din MapWorkPool si le va procesa
+-procesarea consta in faptul ca el va citi din fisier-ul alocat solutiei segmentul de date indicat
+ de offset-urile de start si sfarsit ,  respectand indicatiile din enunt , si va calcula pentru 
+ fiecare cuvant din segmentul de date numarul de aparitii in document.Initial am vrut sa am pentru
+ fiecare Mapworker un Hashtable<String, Integer> in care sa tin solutiile partiale gasite de acesta, 
+ si sa realizez reuniunea(reconstructia) acestira in Reduce , dar pentru mai multa simplitate am 
+ decis sa scriu solutiile intr-o variabila globala  (este vorba de Hashtabel-ul "map" din clasa Main).
+ Astfel chiar daca workerii salveaza rezultatul unei solutii partiale in aceeasi variabila , procesul
+ de calcul al acesteia se realizata independent de ceilalti si in paralel , astfel respectand enuntul
+ problemei.
+-Inainte de a adauga o inregistrare <cuvant,nr. aparitii> in tabel , verifc mai intai daca exista 
+deja o intrare in tabel pentru el.Daca exista voi suprarascrie intrarea respectiva cu una in care 
+valoare este vechiul numar de aparitii + 1.Daca nu exista , atunci voi adauga o noua intrare avand 
+key = cuvant si value = 1 .
+-astfel se termina partea de Map
+-la sfarsitul acesteia in "map" am salvate pentru fiecare fisier tate cuvintele si nr. de aparitii
+ al acestora
+-totusi , inainte de a incepe operatia de Reduce , in Main voi da join la toti MapWorker-ii , pentru
+ a ma asigura ca toate thread-urile de acest tip si-au terminat executia.
+(Obs : 
+-am ales sa folosesc o structura de tip Hashtabel vs HashMap deoarece am citit ca ar fi mai bun in 
+ cazul in care avem de lucru cu syncronizari
+-de asemenea la citirea datelor din fisier de catre MapWorker , am folosit RandomAccessFile pentru
+ a permite citirea concurenta a datelor din fisier).
+
+REDUCE:
+
+- dupa terminarea tuturor operatiilor de tip MAP in Main se creeaza noi ReduceWorker-i ce
+  primesc un ReduceWorkpool in care se afla taskuri de tip ReducePartialSolution(vom avea un
+  ReducePatialSolution pentru fiecare document cu exceptia lui DOC). 
+- acestea contin  numele fisierului pentru care voi calcula gradul de plagiere fata de DOC, un 
+  Hashtable<String, Integer>  care contine cuvintele si numarul de aparitii al acestora din fisier ,
+  si inca un Hashtabel asemanator pentru DOC (ambele hasttabel-uri le iau din "map").De asemenea 
+  contine si pragul de frecventa X
+- fiecare ReduceWorker are 2 ArrayList-uri , fileNames si similarities ,in care voi retine 
+  rezultatele gasite de acestea
+- in Main voi porni toti worker-ii de tip Reduce
+- fiecare ReduceWorker va calcula pentru gradul de plagiat(similitudine) dintre fisier-ul continut
+  de ReducePartialSolution-ul respectiv si DOC , va verifica daca rezultatul este mai mare decat
+  pragul X iar daca rezultatul este pozitiv , atunci le va adauga in fileName si similarities.
+  pentru mai multe detalii despre cum calculez similitudinea verificati 7) ReduceWorker din 
+  sectiunea II
+- fiecare ReduceWorker isi realizeaza treaba independent de ceilalti
+- apoi voi da join la ReduceWorker-i in Main pentru a ma asigura ca s-au terminat toate thread-urile
+-astfel s etermina si partea de REDUCE
+
+
+
+-voi face in Main reuniunea  solutiilor gasite de Reduce workeri si le voi salva in finalDocuments
+ si finalSimilarities
+-apoi voi scrie aceste 2 liste intr-un Hashtabel finalResults pe care apoi il voi sorta in ordinea
+ valorilor(gradului de similitudine/plagiat)
+- la sfarsit voi scrie rezultatele in fisierul de output , respectand formtul din enunt
+
+Mentionez ca tema a rezolvat-o pe Windows in Eclipse.
+
+
+
+

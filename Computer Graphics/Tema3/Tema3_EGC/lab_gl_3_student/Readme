@@ -1,0 +1,293 @@
+Sava
+Dragos 
+334CA
+
+Notatii folosite: 
+- p1 = jucatorul principal aka player nr.1
+- p2 = jucatorul 2
+- p3 = jucatorul 3
+
+- FP_player1 = camera first person pentru p1
+- FP_player2 = camera first person pentru p2
+- FP_player3 = camera first person pentru p3
+
+- TP_player1 = camera third person pentru p1
+- TP_player2 = camera third person pentru p2
+- TP_player3 = camera third person pentru p3
+
+- TV_camera = camera de tip first person aflata deasupra pistei
+
+I. Utilizare
+
+a) Input Tastatura
+
+Taste :
+
+	i)Pentru controlul jucatorului p1
+		-Up - deplaseaza jucatorul principal(p1) pe directia inainte(forward) pe axa Oz
+		-Down - deplaseaza jucatorul inapoi pe axa oz
+		-Right - roteste jucatorul la dreapta in jurul propriului centru
+		-Left - roteste jucatorul la stanga in jurul propriului centru
+	
+	ii)Pentru comutare camere:
+		-'7' - comuta pe FP_player1
+		-'8' - comuta pe FP_player2
+		-'9' - comuta pe FP_player3
+		-'x' - comuta pe TP_player1
+		-'0' - comuta pe TV_camera
+
+		Obs: la inceputul jocului este activata TV_camera
+
+	iii)Pentru rotire camera:
+		-TV_camera:
+			-'q' = rotatie la dreapta in jurul lui OY
+			-'e' = rotatie la stanga in jurul lui OY
+			-'z' = rotatie la dreapta in jurul lui OZ
+			-'c' = rotatie la stanga in jurul lui OZ
+			-'t' = rotatie la dreapta in jurul lui OX
+			-'g' = rotatie la stanga in jurul lui OX
+			-'o' = reseteaza camera tv la pozitia initiala
+		-TP_player1:
+			-'1' = rotatie la dreapta in jurul lui OX
+			-'2' = rotatie la stanga in jurul lui OX
+			-'3' = rotatie la dreapta in jurul lui OY
+			-'4' = rotatie la stanga in jurul lui OY
+			-'5' = rotatie la dreapta in jurul lui OZ
+			-'6' = rotatie la stanga in jurul lui OZ
+
+
+	iV)Translatare camera:
+			-'w' = translateaza inainte
+			-'a' = translateaza la stanga
+			-'s' = translateaza inapoi
+			-'d' = traslateaza la dreapta
+			-'r' = translateaza in sus
+			-'f' = translateaza in jos
+
+
+b) Interfata Grafica
+
+	-Pentru desenarea pistei am urmat indicatiile din enuntul temei , astfel 
+	pentru zonele de la capetele pistei am desenat mai multe semicercuri pentru 
+	fiecare banda , iar pentru segmentele din traseu drepte am desenat mai multe
+	dreptunghiuri.
+	-Culorile folosite pentru pista sunt verde si alb
+	-am reprezentat cei 3 jucatori prin importarea unor meshe pe care le-am 
+	 colorat in 3 culori diferite(rosu,portocaliu si albastru)
+	-am mai folosit un obiect separat pentru reprezentarea camerei TP_player1
+
+II. Implementare
+
+Sistem opera : Windows 8.1
+IDE : Visual Studio
+
+Nota: in rezolvarea acestei teme am aut ca punct de pornire scheletul de cod 
+      din laboratorul 4(cel cu camere)
+
+a)Clase:
+
+
+MyTrack:
+	-aceasta clasa implementeaza in pricipiu desenarea pistei
+	-aceasta va fil alcatuita din 2 suprafete semicirculare si 2 tronsoane drepte
+
+	-Functii:
+		-constructorul primeste ca argumente:
+			-radius	-	raza unui semicerc
+			-size	-	distanta dintre cele 2 semicercuri
+			-culoarea - culoarea spatiului ce inconjoara stadionul  
+			-aici voi crea oniectul de tip pista
+			-pentru zonele drepte am desenat 3 dreptunghiuri pentru fiecare parte
+			-pentru portiunile circulare am desenat 4 semicercuri , apoi am unit
+			 punctele de pe acestea obtinand 3 benzi
+			-semicercurile se afla la distanta 10 unele de altele
+
+
+
+VertexFormat:
+
+	-in aceasta clasa am implementat formatul unui vertex folosit de mine
+	-Campuri:
+		-am doua campuri de tip glm::vec3 unul pentru pozitie si unul pentru culoare
+
+
+
+Modificari efectuate in clasele din Framework:
+
+- nu am efectuat modificari considerabile asupra scheletului din laborator
+- in lab_mesh_loader.hpp am modificat funtia loadObj : 
+	- am adaugat inca un parametru "int type" care imi specifica tipul obiectului 
+	- apoi am introdus un switch in care specific oentru fiecare tip(type) cum sa fie colorat 
+	  obiectul respectiv
+
+
+
+In fisierul main.cpp pe langa functiile care erau deja create in scheletul de cod am implementat urmatoarele functii :
+*****************************************************************
+-isOut() 	- verifica daca jucatorul a iesit sau nu de pe pista
+-getZone	- determina zona in care ma aflu
+			- 1 pentru primul semicerc
+			- 2 pentru al doilea semicerc
+			- 3 pentru prima portiune dreapta
+			- 4 pentru a doua
+-getCadran - determina cadranul in care ma aflu 
+-isOut	   - verifica daca jucatorul meu a iesit sau nu de pe pista
+ 
+In constructorul clasei Laborator : 
+- citesc vitezele jucatorilor din fisier-ul Speed.txt
+- am un vector de stringuri "players" in care tin numele(caile) fisierelor .obj
+- apoi utilizatorul este rugat sa aleaga 3 din lista celor 6 posibili jucatori
+-  
+
+b)Designul obiectelor :
+
+- Pista - este compusa din 3 benzi
+		- cea din mijloc este de culoare alba
+		- celelalte 2 sunt verzi
+		- pentru a realiza fiecare culoar(banda) am desenat cate 2 semicercuri
+		  pentru fiecare portiune semicirculara si pentru a le uni am desenat
+		  2 dreptunghiuri
+
+- In ceea ce priveste jucatorii , am implementat posibilitatea de a alege tipul jucatorilor
+  la inceputul jocului.Modelele pentru jucatori sunt importate din fisiere .obj.Dupa cum
+  se poate observa jucatorii mei sunt Pokemoni.Sunt 6 tipuri din care utilizatorul va alege 3:
+
+  1)Dragonite	- colorat in rosu si portocaliu
+  2)Charizard	- rosu
+  3)Charmander	- portocaliu
+  4)Ponyta		- galben
+  5)Raichu		- galben si portocaliu(spre maro)
+  6)Scyther		- verde
+
+  Camera TPS1 este de culoare neagra
+
+  Am ales aceste modele deoare dimensiunea fisierelor este destul de mica si se incarca repede.
+
+
+
+
+- Camera de filmat(TP1) :
+	- este o mesha importata de mine
+	- este pozitionata in exteriorul stadionului
+	- este de culoare neagra
+
+Se poate alege din 6 jucatori 
+
+
+c)Implementare
+
+In acest segment voi descrie pe scurt cum am gandit realizarea acestui joc.
+
+
+i)CAMERELE:
+
+A)FP1 :
+
+-are aceleasi coordonate pe oX si oZ ca si jucatorul p1 si este pozitionat un pic deasupra acestuia(pe oY)
+-pozitia camerei se modifica odata cu pozitia jucatorului
+-camera priveste mereu cu 10 mai in fata
+-pentru a privi mereu pe directia de inaintare a jucatorului am 2 unghiuri , angle folosit la miscarea jucatorului
+ si alpha 1 , pentru a sti unde sa privesc.
+
+
+B)FP2 si FP3
+
+
+-au aceleasi coordonate pe oX si oZ ca si jucatorii p1 si p2 si sunt pozitionate un pic deasupra acestora
+-pozitia camerei se modifica odata cu pozitia jucatorului
+-camerele privesc mereu un pic inainte pe directia de deplasare a jucatorilor
+
+C)TP1:
+
+- se deplaseaza odata cu jucatorul 1
+- se afla in exteriorul pistei
+- direcția înainte a camerei TPS este întotdeauna perpendiculară pe tangenta la conturul stadionului
+
+
+D)TV:
+
+-este pozitionata in mijlocul stadionului la o altitudine y = 250
+-priveste mereu spre punctul (0,0,0)
+-are toate functiile camerei FPS din laborator
+
+ii)MISCAREA
+
+Primul jucator este controlat de la tastatura.
+Pentru a descria miscarea pentru jucatorii 2 si 3 , am tratat 4 cazuri , pentru fiecare din zone.
+
+Jucatorii se deplaseaza cu vitezele din fisierul speed.
+
+!Obs:
+-jucatorul poate sa iasa din teren dar viteza lui este drastic incetinita pana va reveni pe pista
+-aceasta abordare mi se pare mult mai realista
+ Functia isOut se verifica de acest lucru.Pentru zonele semicirculare am avut in vedere urmatorul lucru:
+ -vectorii pozitiilor pe oX si oZ ale jucatorului formeaza un triunghi dreptunghic , cu ipotenuza vectorul distanta
+  de la pozitia lui la origine(0,0,0) sau (0,0,-track_length).
+ - astfel calculez ipotenuza folosind Pitagora si am in vedere ca ea sa nu fie < radius sau > radius+3*w
+
+ Linia de finish este reprezentata printr-o linie rosie. 
+
+
+III. Testare
+
+IDE : Visual Studio 2013 
+Sistem de operare : Windows 8.1
+Display-ul pe care am facut testele avea rezolutia de 1366x768
+
+
+
+IV. Probleme aparute
+
+
+Am avut un bag in ceea ce priveste culoarea camerei pentru TP1.
+Desi ii specificam in mesh_loader clar ce culoare sa aiba , pe ecran era
+afisata o cu totul alta culoare.Am rezolvat in cele din urma aceasta problema
+si sper sa nu mai apara.
+
+V. Continutul Arhivei
+
+-lab_gl_3.sln este solutia Visual Studio a temei
+-folderul lab3 contine:
+	-framework-ul care era gata inclus in scheletul de laborator
+	-main.cpp
+	-VertexFormat.h
+	-MyTrack.h
+-restul folderelor din schelet...
+-Readme
+-Speed.txt (din acest fisier voi citi distantele pentru fiecare jucator)
+
+VI. Functionalitati
+Functionalitati : 
+
+- in tema apar cei 3 jucatori si pista
+
+- jucatorul 1 poate fi controlat de la tastatura pentru a se deplasa pe pista/circuit
+
+- control cu mai multe taste apăsate la un moment dat
+
+- atâta timp cât este apăsată o tastă, se realizează încontinuu mișcarea asociată tastei, ci nu o singură dată
+
+- dacă se apasă LEFT/RIGHT direcția înainte se schimbă (adică obiectul se rotește spre stânga/dreapta).
+
+- daca jucatorul iese de pe pista viteza lui de deplasare va fi de 5 ori mai mica
+
+- jucatorii se deplaseaza automat pe circuit cu vitezele citite din fisierul Speed.txt
+
+- am implementat pentru fiecare dintre cei 3 jucatori cate o camera de tip FirstPerson
+
+- pentru primul jucator mai am si o camera ThirdPerson care respecta conditiile din enuntul temei
+
+- am implementat deasemenea o a patra camera de tip FirstPerson aflata deasupra stadionului
+  care are toate functionalitatile din laborator
+
+- pentru a termina cursa jucatorii efectueaza o tura de pista dupa care se opresc
+
+- viteza fiecărui jucător este citita dintr-un fișier și rămâne aceeași pe tot parcursul cursei
+
+- fiecare jucator are asociata o culoare diferita
+
+- jucătorii și obiectul atașat camerei TPS au fost construiti folosind VAO, VBO și IBO
+
+VII.Altceva
+
+
